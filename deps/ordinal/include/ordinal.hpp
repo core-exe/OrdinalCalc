@@ -13,8 +13,8 @@ class Ordinal{
     virtual Ordinal* operator[](int i);
     virtual Ordinal* predecessor();
 
-    virtual string latex(bool final = false, bool textstyle = false);
-    virtual string text(bool final = false);
+    virtual string latex(bool final = true, bool textstyle = false);
+    virtual string text(bool final = true);
 
     private:
     virtual Ordinal* get_fs(int i);

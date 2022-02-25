@@ -21,8 +21,8 @@ class CantorNormalForm{
     CantorNormalForm* operator[](int i);
     CantorNormalForm* predecessor();
 
-    string latex(bool final = false, bool textstyle = false);
-    string text(bool final = false); // TODO
+    string latex(bool final = true, bool textstyle = false);
+    string text(bool final = true); // TODO
 
     Integer* to_integer();
 
@@ -36,3 +36,10 @@ class CantorNormalForm{
 typedef CantorNormalForm CNF;
 typedef tuple<CantorNormalForm*, Integer> cnf_term;
 typedef vector<cnf_term> cnf_terms;
+
+cnf_term w_exp(CantorNormalForm* exp, Integer coef = Integer(1));
+cnf_term w_exp(Integer exp, Integer coef = Integer(1));
+cnf_term w_exp(cnf_term exp, Integer coef = Integer(1));
+
+cnf_term cnf_term_int(Integer integer);
+cnf_term cnf_term_int(int integer);

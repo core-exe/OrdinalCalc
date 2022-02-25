@@ -13,8 +13,8 @@ class Integer: public Ordinal{
     bool is_successor();
     Integer* predecessor();
 
-    string latex(bool final = false, bool textstyle = false);
-    string text(bool final = false);
+    string latex(bool final = true, bool textstyle = false);
+    string text(bool final = true);
 
     private:
     Integer* decrement();

@@ -1,6 +1,7 @@
 # include <vector>
 # include <tuple>
 # include <string>
+# include <iostream>
 # include "ordinal.hpp"
 # include "integer.hpp"
 # include "cnf.hpp"
@@ -14,7 +15,8 @@ CantorNormalForm::CantorNormalForm(){
 
 CantorNormalForm::CantorNormalForm(Integer _int){
     terms = vector<tuple<CantorNormalForm*, Integer>>();
-    terms.push_back(tuple<CantorNormalForm*, Integer>(&ZERO_CNF, _int));
+    if(!_int.is_zero())
+        terms.push_back(tuple<CantorNormalForm*, Integer>(&ZERO_CNF, _int));
 }
 
 CantorNormalForm::CantorNormalForm(vector<tuple<CantorNormalForm*, Integer>> _terms){
@@ -22,7 +24,7 @@ CantorNormalForm::CantorNormalForm(vector<tuple<CantorNormalForm*, Integer>> _te
 }
 
 bool CantorNormalForm::is_zero(){
-    return length() == 0;
+    return terms.size() == 0;
 }
 
 bool CantorNormalForm::has_fs(){
@@ -34,7 +36,7 @@ bool CantorNormalForm::is_successor(){
 }
 
 bool CantorNormalForm::is_int(){
-    return is_zero() || (length() == 1 && std::get<0>(terms[0])->is_zero());
+    return is_zero() || (terms.size() == 1 && std::get<0>(terms[0])->is_zero());
 }
 
 CantorNormalForm* CantorNormalForm::operator[](int i){
@@ -63,8 +65,15 @@ string CantorNormalForm::latex(bool final, bool textstyle){
         CNF* exp = get<0>(terms[i]);
         if(exp->is_zero())
             str_for_term.push_back(coef.latex(false, textstyle));
-        else if(exp->is_int() && get<1>(exp->terms[0]).value == 1) 
-            str_for_term.push_back(string("\\omega ")+coef.latex(false, textstyle));
+        else if(exp->is_int() && get<1>(exp->terms[0]).value == 1) {
+            if(coef.value == 1)
+                str_for_term.push_back(string("\\omega"));
+            else
+                str_for_term.push_back(string("\\omega")+coef.latex(false, textstyle));
+        } else if(coef.value == 1)
+            str_for_term.push_back(string("\\omega^{")
+            +exp->latex(false, textstyle)
+            +string("}"));
         else
             str_for_term.push_back(string("\\omega^{")
             +exp->latex(false, textstyle)
@@ -87,7 +96,7 @@ string CantorNormalForm::latex(bool final, bool textstyle){
     return s;
 }
 
-string CantorNormalForm::text(bool final = false){
+string CantorNormalForm::text(bool final){
     if(is_zero())
         return string("0");
     string s = string("");
@@ -97,8 +106,13 @@ string CantorNormalForm::text(bool final = false){
         CNF* exp = get<0>(terms[i]);
         if(exp->is_zero())
             str_for_term.push_back(coef.text(false));
-        else if(exp->is_int() && get<1>(exp->terms[0]).value == 1) 
-            str_for_term.push_back(string("w*")+coef.text(false));
+        else if(exp->is_int() && get<1>(exp->terms[0]).value == 1) {
+            if(coef.value == 1)
+                str_for_term.push_back(string("w"));
+            else
+                str_for_term.push_back(string("w*")+coef.text(false));
+        } else if(coef.value == 1)
+            str_for_term.push_back(string("w^")+exp->text(false));
         else
             str_for_term.push_back(string("w^")
             +exp->text(true)
@@ -111,7 +125,7 @@ string CantorNormalForm::text(bool final = false){
         else
             s = s + string("+") + str_for_term[i];
     }
-    if(final && (terms.size()>1 || terms.size()==1 && get<1>(terms[0]).value>1)) {
+    if(!final && (terms.size()>1 || terms.size()==1 && !is_int() && get<1>(terms[0]).value>1)) {
         s = string("(") + s + string(")");
     }
     return s;
@@ -120,7 +134,7 @@ string CantorNormalForm::text(bool final = false){
 Integer* CantorNormalForm::to_integer(){
     if(is_zero())
         return new Integer(0);
-    if(length() == 1 && std::get<0>(terms[0])->is_zero())
+    if(terms.size() == 1 && std::get<0>(terms[0])->is_zero())
         return &std::get<1>(terms[0]);
     throw "Error: This CNF ordinal is not equal to natural numbers.";
 }
@@ -138,10 +152,10 @@ CantorNormalForm* CantorNormalForm::get_fs(int i){
     CNF* new_cnf = decrease_last();
     if(get<0>(terms[terms.size()-1])->has_fs()) {
         new_cnf->terms.push_back(cnf_term(
-            &(get<0>(terms[terms.size()-1]))[i],
+            (*(get<0>(terms[terms.size()-1])))[i],
             Integer(1)
             ));
-    } else {
+    } else if(i != 0) {
         new_cnf->terms.push_back(cnf_term(
             get<0>(terms[terms.size()-1])->predecessor(),
             Integer(i)
@@ -152,4 +166,24 @@ CantorNormalForm* CantorNormalForm::get_fs(int i){
 
 CantorNormalForm* CantorNormalForm::decrement(){
     return decrease_last();
+}
+
+cnf_term w_exp(CantorNormalForm* exp, Integer coef){
+    return cnf_term(exp, coef);
+}
+
+cnf_term w_exp(Integer exp, Integer coef){
+    return cnf_term(new CNF(exp), coef);
+}
+
+cnf_term w_exp(cnf_term exp, Integer coef){
+    return cnf_term(new CNF(cnf_terms({exp})), coef);
+}
+
+cnf_term cnf_term_int(Integer integer){
+    return cnf_term(new CNF(), integer);
+}
+
+cnf_term cnf_term_int(int integer){
+    return cnf_term(new CNF(), Integer(integer));
 }

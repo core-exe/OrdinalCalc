@@ -29,13 +29,15 @@ Integer* Integer::predecessor(){
 string Integer::latex(bool final, bool textstyle){
     char str[64];
     sprintf(str, "%d", value);
+    string s = string(str);
     if(final){
         if(textstyle)
-            sprintf(str, "$%s$", str);
+            s = "$" + s + "$";
         else
-            sprintf(str, "$$%s$$", str);
+            s = "$$" + s + "$$";
+
     }
-    return string(str);
+    return s;
 }
 
 string Integer::text(bool final){
