@@ -6,11 +6,13 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 SET(ORDINAL_INCLUDES
+        include/cnf.hpp
         include/integer.hpp
         include/ordinal.hpp
         )
 
 SET(ORDINAL_SOURCES
+        src/cnf.cpp
         src/integer.cpp
         src/ordinal.cpp
         )

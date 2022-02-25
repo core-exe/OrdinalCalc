@@ -14,7 +14,7 @@ bool Ordinal::is_successor(){
     return false;
 }
 
-Ordinal Ordinal::operator[](int i){
+Ordinal* Ordinal::operator[](int i){
     if(this->has_fs()){
         return this->get_fs(i);
     } else {
@@ -22,7 +22,7 @@ Ordinal Ordinal::operator[](int i){
     }
 }
 
-Ordinal Ordinal::predecessor(){
+Ordinal* Ordinal::predecessor(){
     if(this->is_successor()){
         return this->decrement();
     } else {
@@ -38,10 +38,10 @@ string Ordinal::text(bool final){
     return string("");
 }
 
-Ordinal Ordinal::get_fs(int i){
-    return Ordinal();
+Ordinal* Ordinal::get_fs(int i){
+    return new Ordinal();
 }
 
-Ordinal Ordinal::decrement(){
-    return Ordinal();
+Ordinal* Ordinal::decrement(){
+    return new Ordinal();
 }

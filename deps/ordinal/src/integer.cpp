@@ -19,6 +19,13 @@ bool Integer::is_successor(){
     return value != 0;
 }
 
+Integer* Integer::predecessor(){
+    if(value == 0)
+        throw "Error: Trying to get the predecessor of zero.";
+    else
+        return decrement();
+}
+
 string Integer::latex(bool final, bool textstyle){
     char str[64];
     sprintf(str, "%d", value);
@@ -37,6 +44,6 @@ string Integer::text(bool final){
     return string(str);
 }
 
-Ordinal Integer::decrement(){
-    return Integer(value - 1);
+Integer* Integer::decrement(){
+    return new Integer(value - 1);
 }

@@ -11,10 +11,11 @@ class Integer: public Ordinal{
     bool is_zero();
     bool has_fs();
     bool is_successor();
+    Integer* predecessor();
 
     string latex(bool final = false, bool textstyle = false);
     string text(bool final = false);
 
     private:
-    Ordinal decrement();
+    Integer* decrement();
 };
